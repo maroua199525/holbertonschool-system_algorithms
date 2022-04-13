@@ -13,8 +13,7 @@ In a tree (binary or N-ary), a node can only be connected to its parent and chil
 - **Undirected graph**
 A graph is called undirected when all edges are bidirectional, meaning that if a vertex A is connected to a vertex B, then B is connected to A.
 
-- The following image shows the graphical representation of an undirected graph:
-![](https://s3.amazonaws.com/intranet-projects-files/concepts/86/Undirected_graph.png)
+- The following image shows the graphical representation of an undirected graph:![](https://s3.amazonaws.com/intranet-projects-files/concepts/86/Undirected_graph.png)
 
 
 ###### Example of usecase
@@ -26,8 +25,7 @@ A graph is called undirected when all edges are bidirectional, meaning that if a
 **Directed graph**
 - On the other hand, a graph is called directed when at least one edge is unidirectional, meaning that if a vertex A is connected to a vertex B, then B is not neccesarily connected to A (But it can be, through another edge).
 
-- The following image shows the graphical representation of a directed graph:
-![](https://s3.amazonaws.com/intranet-projects-files/concepts/86/Directed_graph.png)
+- The following image shows the graphical representation of a directed graph:![](https://s3.amazonaws.com/intranet-projects-files/concepts/86/Directed_graph.png)
 
 ######  Example of usecase
 - Other social networks like **Twitter**, or I**nstagram**, can be represented using directed graphs:
@@ -37,8 +35,7 @@ A graph is called undirected when all edges are bidirectional, meaning that if a
 
 
 **Weighted graphs**
-- Another possible property of a graph is that its edges can be given a weight.
-![](https://s3.amazonaws.com/intranet-projects-files/concepts/86/Weighted_graph.png)
+- Another possible property of a graph is that its edges can be given a weight.![](https://s3.amazonaws.com/intranet-projects-files/concepts/86/Weighted_graph.png)
 ###### - Examples of usecase
 - We can easily understand the purpose of weighted graphs with a graph representing the time to travel between **cities**:
 
