@@ -8,7 +8,7 @@
 
 graph_t *graph_create(void)
 {
-	graph_t *new_graph= NULL;
+	graph_t *new_graph = NULL;
 
 	new_graph = malloc(sizeof(graph_t));
 
