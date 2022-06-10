@@ -4,9 +4,34 @@
 #include <limits.h>
 #include <string.h>
 
+/**
+ * get_min - get min distance vertex from @dist array:
+ * @set: set where distances have already been calculated, hence min dist is
+ * not considered to vertex inside this set (in this case boolean array)
+ * @dist: array with distances to vertex from src vertex
+ * @graph: a graph
+ * Return: a min distance vertex or NULL if failed or
+ * there are no more vertices
+*/
+vertex_t *get_min(int *set, size_t *dist, graph_t *graph)
+{
+	size_t min = ULONG_MAX;
+	size_t idx = ULONG_MAX, i;
+	vertex_t *v = graph->vertices;
+
+	for (i = 0; i < graph->nb_vertices; ++i)
+		if (!set[i] && min > dist[i])
+			min = dist[i], idx = i;
+	if (idx == ULONG_MAX)
+		return (NULL);
+	for (i = 0; i < idx; ++i)
+		v = v->next;
+	return (v);
+
+}
 
 /**
- * distance - main logic of Dijkstra's algorithm
+ * calculate_distance - main logic of Dijkstra's algorithm
  * @graph: a graph
  * @start: source vertex
  * @set: set where distances have already been calculated, hence min dist is
@@ -15,7 +40,7 @@
  * @parent: parent array where path is stored, used to retrieve path
  * from src to destination
 */
-void distance(graph_t *graph, vertex_t const *start,
+void calculate_distance(graph_t *graph, vertex_t const *start,
 			int *set, size_t *dist, vertex_t **parent)
 {
 	vertex_t *vertex;
@@ -23,7 +48,7 @@ void distance(graph_t *graph, vertex_t const *start,
 
 	if (!graph || !set || !dist)
 		return;
-	while ((vertex = min_get(set, dist, graph)))
+	while ((vertex = get_min(set, dist, graph)))
 	{
 		set[vertex->index] = 1;
 		edge = vertex->edges;
@@ -39,31 +64,6 @@ void distance(graph_t *graph, vertex_t const *start,
 			}
 		}
 	}
-}
-/**
- * min_get - get min distance vertex from @dist array:
- * @set: set where distances have already been calculated, hence min dist is
- * not considered to vertex inside this set (in this case boolean array)
- * @dist: array with distances to vertex from src vertex
- * @graph: a graph
- * Return: a min distance vertex or NULL if failed or
- * there are no more vertices
-*/
-vertex_t *min_get(int *set, size_t *dist, graph_t *graph)
-{
-	size_t min = ULONG_MAX;
-	size_t idx = ULONG_MAX, i;
-	vertex_t *v = graph->vertices;
-
-	for (i = 0; i < graph->nb_vertices; ++i)
-		if (!set[i] && min > dist[i])
-			min = dist[i], idx = i;
-	if (idx == ULONG_MAX)
-		return (NULL);
-	for (i = 0; i < idx; ++i)
-		v = v->next;
-	return (v);
-
 }
 
 /**
@@ -146,7 +146,7 @@ queue_t *dijkstra_graph(graph_t *graph, vertex_t const *start,
 	/* Set all to UINT_MAX */
 	memset(dist, 0xFF, graph->nb_vertices * sizeof(*dist));
 	dist[start->index] = 0;
-	distance(graph, start, set, dist, parent);
+	calculate_distance(graph, start, set, dist, parent);
 	free(set), free(dist);
 	return (get_path(parent, target));
 }
