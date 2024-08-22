@@ -18,6 +18,22 @@ typedef struct symbol_s
 	size_t freq;
 } symbol_t;
 
+
+/**
+ * struct char_freq_s - Stores a two vector arrays for symbols and
+ * their frequencies, plus the size of each
+ *
+ * @data: vector of characters
+ * @freq: vector of frequencies
+ * @size: size of the vectors
+ */
+typedef struct char_freq_s
+{
+	char *data;
+	size_t *freq;
+	size_t size;
+} char_freq_t;
+
 /* Functions Task 5*/
 symbol_t *symbol_create(char data, size_t freq);
 
@@ -46,5 +62,10 @@ int huffman_codes(char *data, size_t *freq, size_t size);
 size_t get_depth(binary_tree_node_t *root, size_t depth);
 void free_codes(binary_tree_node_t *root);
 void print_huffman_tree_r(binary_tree_node_t *root, char *code, size_t depth);
+
+/* Main Huffman Program Prototypes */
+int compress(const char *in_file, const char *out_file);
+int decompress(const char *in_file, const char *out_file);
+char_freq_t *count_symbols(const char *in_file);
 
 #endif /* HUFFMAN_H */
