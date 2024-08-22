@@ -44,4 +44,7 @@ binary_tree_node_t *huffman_tree(char *data, size_t *freq, size_t size);
 int huffman_codes(char *data, size_t *freq, size_t size);
 
 size_t get_depth(binary_tree_node_t *root, size_t depth);
+void free_codes(binary_tree_node_t *root);
+void print_huffman_tree_r(binary_tree_node_t *root, char *code, size_t depth);
+
 #endif /* HUFFMAN_H */
