@@ -1,21 +1,18 @@
-CC = gcc -g -Wall -Wextra -Werror -pedantic -Iheap/ -I./ heap/*.c *.c test/
+SRC =	$(shell find . -name "*.c") \
+	$(shell find .. -name "*.c")
+OBJ =	$(SRC:.c=.o)
 
-all:
-	$(CC)$(NUM)-main.c
 
-run: all
-	./a.out
-	rm a.out
+CC =	gcc
+FLAGS=	-Wall -Werror -Wextra -pedantic -g3
 
-gdb: all
-	gdb ./a.out
+huffman: $(OBJ)
+	$(CC) $^ $(FLAGS) -o huffman
 
-valgrind: all
-	valgrind ./a.out
-	rm ./a.out
+%o: %.c
+	@$(CC) -c -I. -Iheap $< $(FLAGS) -o $@ 
 
-betty:
-	betty *.c test/*.c heap/*.c *.h heap/*.h
 
+.PHONY: clean
 clean:
-	rm a.out
+	rm -f $(OBJ) huffman
