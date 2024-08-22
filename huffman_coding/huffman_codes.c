@@ -1,100 +1,47 @@
 #include "huffman.h"
-#include "heap.h"
-#include <string.h>
 
 /**
-* huffman_codes_recursive - Recursively traverse the Huffman tree print codes.
-*
-* @node: Current node being visited.
-* @code: Current Huffman code being built.
-*/
-void huffman_codes_recursive(const binary_tree_node_t *node, char *code)
+ * print_huffman - Print Huffman tree
+ * @node: Is a Pointer to root of tree
+ * @bin: Is a Binary number
+ *
+ * Return: Nothing
+ */
+void print_huffman(binary_tree_node_t *node, int bin)
 {
-	char *code_right = NULL, *code_left = NULL;
+	symbol_t *symbol = NULL;
 
 	if (!node)
 		return;
-
-	if (!node->left && !node->right)
+	symbol = node->data;
+	if (symbol->data != -1)
+		printf("%c: %s\n", symbol->data, itoa(bin, 2) + 1);
+	else
 	{
-		printf("%c: %s\n", ((symbol_t *)node->data)->data, code);
-		free_symbol(node->data);
-		free((void *)node);
-		return;
+			print_huffman(node->left, bin << 1);
+			print_huffman(node->right, (bin << 1) + 1);
 	}
-
-	code_left = strcat(strcpy(malloc(strlen(code) + 2), code), "0");
-	if (!code_left)
-	{
-		fprintf(stderr, "Error allocating memory\n");
-		exit(EXIT_FAILURE);
-	}
-
-	huffman_codes_recursive(node->left, code_left);
-	free(code_left);
-
-	code_right = strcat(strcpy(malloc(strlen(code) + 2), code), "1");
-	if (!code_right)
-	{
-		fprintf(stderr, "Error allocating memory\n");
-		exit(EXIT_FAILURE);
-	}
-
-	huffman_codes_recursive(node->right, code_right);
-	free(code_right);
-	free(node->data);
-	free((void *)node);
+	free(symbol);
+	free(node);
 }
 
-
 /**
-* huffman_codes - Builds the Huffman tree and prints resulting Huffman codes.
-*
-* @data: Array of characters.
-* @freq: Array of corresponding frequencies.
-* @size: Size of the arrays.
-*
-* Return: 1 on success, 0 on failure.
-*/
+ * huffman_codes - Build the Huffman tree and print the resulting Huffman
+ * codes for each symbol
+ * @data: Is an array of characters of size size
+ * @freq: Is an array containing the associated frequencies (of size size too)
+ * @size: Size of data
+ *
+ * Return: 1 if it succeed, 0 if it fails
+ */
 int huffman_codes(char *data, size_t *freq, size_t size)
 {
-	heap_t *priority_queue = NULL;
-	binary_tree_node_t *root = NULL;
-	char *code = NULL;
+	binary_tree_node_t *node = NULL;
 
-	if (!data || !freq || size == 0)
+	if (!data || !freq || !size)
 		return (0);
 
-	priority_queue = huffman_priority_queue(data, freq, size);
-
-	if (!priority_queue)
-		return (0);
-
-	while (priority_queue->size > 1)
-		huffman_extract_and_insert(priority_queue);
-
-	root = heap_extract(priority_queue);
-
-	if (!root)
-	{
-		heap_delete(priority_queue, free_symbol);
-		return (0);
-	}
-
-	code = malloc(1);
-
-	if (!code)
-	{
-		heap_delete(priority_queue, free_symbol);
-		free(root);
-		return (0);
-	}
-	code[0] = '\0';
-
-	huffman_codes_recursive(root, code);
-
-	heap_delete(priority_queue, free_symbol);
-	free(root);
-	free(code);
+	node = huffman_tree(data, freq, size);
+	print_huffman(node, 1);
 	return (1);
 }
