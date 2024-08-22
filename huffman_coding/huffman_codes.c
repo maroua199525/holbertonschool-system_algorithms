@@ -1,67 +1,99 @@
 #include "huffman.h"
-
-void print_huffman_codes(binary_tree_node_t *tree, unsigned long path);
+#include <stdio.h>
 
 /**
- * huffman_codes - generates character codes from huffman tree
+ * huffman_codes - produce a huffman tree and print all huffman codes
+ *
  * @data: array of characters
- * @freq: frequency of each character
- * @size: size of data and freq arrays
- * Return: 1 on success else 0
+ * @freq: array of frequencies of characters
+ * @size: size of the arrays
+ *
+ * Return: 1 on success, 0 on failure
  */
 int huffman_codes(char *data, size_t *freq, size_t size)
 {
-	binary_tree_node_t *tree = huffman_tree(data, freq, size);
+	binary_tree_node_t *root;
+	char *code;
+	size_t depth, i;
 
-	if (!tree)
+	root = huffman_tree(data, freq, size);
+	if (root == NULL)
 		return (0);
-	print_huffman_codes(tree, 1);
+	depth = get_depth(root, 0);
+	code = malloc(sizeof(char) + (depth + 1));
+	for (i = 0; i < depth + 1; i++)
+		code[i] = '\0';
+	print_huffman_tree_r(root, code, 0);
+	free(code);
+	free_codes(root);
+
 	return (1);
 }
 
 /**
- * print_huffman_codes - walks the tree to print the huffman codes
- * @tree: pointer to current tree node
- * @path: long int holding binary representation of path
+ * free_codes - free all nodes in the huffman tree
+ *
+ * @root: root of current tree to free
  */
-void print_huffman_codes(binary_tree_node_t *tree, unsigned long path)
+void free_codes(binary_tree_node_t *root)
 {
-	symbol_t *symbol;
+	if (root->left)
+		free_codes(root->left);
+	if (root->right)
+		free_codes(root->right);
+	free(root->data);
+	free(root);
+}
 
-	if (!tree)
-		return;
-	symbol = tree->data;
-	if (symbol->data != -1)
+/**
+ * get_depth - get the depth from the current @root
+ *
+ * @root: current root of the tree
+ * @depth: depth in the tree
+ *
+ * Return: depth of the tree from @root
+ */
+size_t get_depth(binary_tree_node_t *root, size_t depth)
+{
+	int left_depth, right_depth;
+
+	left_depth = right_depth = -1;
+	if (root->left)
+		left_depth = get_depth(root->left, depth + 1);
+	if (root->right)
+		right_depth = get_depth(root->right, depth + 1);
+	else
+		return (depth);
+	if (left_depth > right_depth)
+		return (left_depth);
+	return (right_depth);
+}
+
+/**
+ * print_huffman_tree_r - print a huffman tree's contents recursively from
+ * a given @root
+ *
+ * @root: current root of huffman tree
+ * @code: code to print
+ * @depth: depth into huffman tree
+ */
+void print_huffman_tree_r(binary_tree_node_t *root, char *code, size_t depth)
+{
+	if (root->left)
 	{
-		printf("%c: %s\n", symbol->data, convert(path, 2) + 1);
+		code[depth] = '0';
+		print_huffman_tree_r(root->left, code, depth + 1);
+	}
+	if (root->right)
+	{
+		code[depth] = '1';
+		print_huffman_tree_r(root->right, code, depth + 1);
 	}
 	else
 	{
-		print_huffman_codes(tree->left, path << 1);
-		print_huffman_codes(tree->right, (path << 1) + 1);
-	}
-	free(symbol);
-	free(tree);
-}
-/**
- * convert - converts a number to a custom base
- * @num: the number to convert
- * @base: the desired base
- * Return: pointer to string containing digits in new base
- */
-char *convert(long num, long base)
-{
-	char *DIGITS = "0123456789ABCDEFG", *ptr;
-	static char buf[66];
-	short neg = num < 0 ? 1 : 0;
+		symbol_t *symbol;
 
-	ptr = &buf[sizeof(buf)];
-	*--ptr = 0;
-	do {
-		*--ptr = DIGITS[ABS(num % base)];
-		num /= base;
-	} while (num);
-	if (neg)
-		*--ptr = '-';
-	return (ptr);
+		symbol = (symbol_t *)root->data;
+		printf("%c: %s\n", symbol->data, code);
+	}
 }
